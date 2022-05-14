@@ -1,4 +1,4 @@
-# flutter_application_1
+# firebase_test
 
 A new Flutter project.
 
