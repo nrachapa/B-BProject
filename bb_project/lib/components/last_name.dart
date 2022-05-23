@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 class LastName extends StatelessWidget {
   final String hintText;
   final IconData icon;
-  final ValueChanged<String> onChanged;
+  final textController;
   const LastName({Key? key,
     required this.hintText,
     this.icon = Icons.person,
-    required this.onChanged}) : super(key: key);
+    required this.textController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return  TextFieldContainer(
       child: TextField(
-        onChanged: onChanged,
+        controller: textController,
         decoration: InputDecoration(
           icon: Icon(
             icon,

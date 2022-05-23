@@ -1,19 +1,47 @@
 import 'package:bb_project/Screens/login/components/background.dart';
 import 'package:bb_project/Screens/signup/signup_screen.dart';
+import 'package:bb_project/Screens/home/home_screen.dart';
 import 'package:bb_project/components/forgot_password.dart';
 import 'package:bb_project/components/rounded_button.dart';
 import 'package:bb_project/components/rounded_input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import '../../Message.dart';
 
 import '../../../components/existing_account.dart';
 import '../../../components/rounded_password_field.dart';
 
 class Body extends StatelessWidget {
-  const Body({Key? key}) : super(key: key);
+  Body({Key? key}) : super(key: key);
+
+  final controllerUsername = TextEditingController();
+  final controllerPassword = TextEditingController();
+  bool isLoggedIn = false;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+
+    void doUserLogin() async {
+      final username = controllerUsername.text.trim();
+      final password = controllerPassword.text.trim();
+
+      final user = ParseUser(username, password, null);
+
+      var response = await user.login();
+      if (response.success) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+              (Route<dynamic> route) => false,
+        );
+      } else {
+        Message.showError(context: context, message: response.error!.message);
+      }
+    }
+
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return Background(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -26,14 +54,14 @@ class Body extends StatelessWidget {
           SizedBox(height: size.height * 0.0),
           RoundedInputField(
             hintText: "Username",
-            onChanged: (value) {},
+            controllerText: controllerUsername,
           ),
           SizedBox(height: size.height * 0.0),
           RoundedPasswordField(
-            onChanged: (value) {},
+            controllerText: controllerPassword,
           ),
           SizedBox(height: size.height * 0.01),
-          RoundedButton(text: "LOGIN", press: () {}),
+          RoundedButton(text: "LOGIN", press: () => doUserLogin()),
           SizedBox(height: size.height * 0.02),
           existingAccount(
             press: () {
@@ -55,3 +83,4 @@ class Body extends StatelessWidget {
     );
   }
 }
+

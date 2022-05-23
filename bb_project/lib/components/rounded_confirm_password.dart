@@ -3,9 +3,9 @@ import 'package:bb_project/constants.dart';
 import 'package:flutter/material.dart';
 
 class RoundedConfirmPasswordField extends StatelessWidget {
-  final ValueChanged<String> onChanged;
+  final textContoller;
 
-  const RoundedConfirmPasswordField({Key? key, required this.onChanged})
+  const RoundedConfirmPasswordField({Key? key, required this.textContoller})
       : super(key: key);
 
   @override
@@ -13,7 +13,7 @@ class RoundedConfirmPasswordField extends StatelessWidget {
     return TextFieldContainer(
       child: TextField(
         obscureText: true,
-        onChanged: onChanged,
+        controller: textContoller,
         decoration: const InputDecoration(
             hintText: "Confirm Password",
             icon: Icon(
