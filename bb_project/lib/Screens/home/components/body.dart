@@ -1,4 +1,5 @@
 import 'package:bb_project/Screens/home/components/background.dart';
+import 'package:bb_project/Screens/home/components/button_widget.dart';
 import 'package:bb_project/Screens/home/components/profile_widget.dart';
 import 'package:bb_project/Screens/home/components/user.dart';
 import 'package:bb_project/Screens/home/components/user_preference.dart';
@@ -9,6 +10,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 import '../../Message.dart';
 import 'appbar_widget.dart';
+import 'hours_widget.dart';
 
 class Body extends StatelessWidget {
   ParseUser? currentUser;
@@ -44,11 +46,18 @@ class Body extends StatelessWidget {
       body: ListView(
         physics: const BouncingScrollPhysics(),
         children: [
+          const SizedBox(height: 24),
           ProfileWidget(imagePath: user.imagePath,
             onClicked: () async {},
           ),
           const SizedBox(height: 24),
           buildName(user),
+          const SizedBox(height: 24),
+          Center(child: projectButton(user)),
+          const SizedBox(height: 50),
+          const HoursWidget(),
+          const SizedBox(height: 50),
+          Center(child: SubmitHourButton(user)),
         ],
       )
       // body: FutureBuilder<ParseUser?>(
@@ -107,4 +116,16 @@ class Body extends StatelessWidget {
       )
     ],
   );
+
+  Widget projectButton(User user) {
+    return ButtonWidget(
+        text: "Projects",
+        onClicked: () {});
+  }
+
+  Widget SubmitHourButton(User user) {
+    return ButtonWidget(
+        text: "Submit Hours",
+        onClicked: () {});
+  }
 }
