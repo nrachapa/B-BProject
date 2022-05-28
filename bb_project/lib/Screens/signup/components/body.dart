@@ -23,13 +23,13 @@ class Body extends StatelessWidget {
   final controllerNewLastName = TextEditingController();
   final controllerNewEmployeeID = TextEditingController();
 
-
-
   @override
   Widget build(BuildContext context) {
     void doUserRegistration() async {
-
-      if (controllerNewPassword.text.trim().compareTo(controllerConfirmPassword.text.trim()) != 0) {
+      if (controllerNewPassword.text
+              .trim()
+              .compareTo(controllerConfirmPassword.text.trim()) !=
+          0) {
         Message.showError(context: context, message: "Passwords do not match!");
         return;
       }
@@ -46,7 +46,7 @@ class Body extends StatelessWidget {
         Message.showSuccess(
             context: context,
             message:
-            'User was successfully created! Please verify your email before Login',
+                'User was successfully created! Please verify your email before Login',
             onPressed: () async {
               Navigator.pop(context);
             });
@@ -54,18 +54,33 @@ class Body extends StatelessWidget {
         Message.showError(context: context, message: response.error!.message);
       }
     }
+
     Size size = MediaQuery.of(context).size;
     return Background(
+
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         SizedBox(height: size.height * 0.05),
-        RoundedInputField(hintText: "Your Email", controllerText: controllerNewEmail,),
-        FirstName(hintText: "First Name", textController: controllerNewFirstName,),
+        RoundedInputField(
+          hintText: "Your Email",
+          controllerText: controllerNewEmail,
+        ),
+        FirstName(
+          hintText: "First Name",
+          textController: controllerNewFirstName,
+        ),
         LastName(hintText: "Last Name", textController: controllerNewLastName),
-        EmployeeID(hintText: "Employee ID", textController: controllerNewEmployeeID,),
-        RoundedPasswordField(controllerText: controllerNewPassword,),
-        RoundedConfirmPasswordField(textContoller: controllerConfirmPassword,),
+        EmployeeID(
+          hintText: "Employee ID",
+          textController: controllerNewEmployeeID,
+        ),
+        RoundedPasswordField(
+          controllerText: controllerNewPassword,
+        ),
+        RoundedConfirmPasswordField(
+          textContoller: controllerConfirmPassword,
+        ),
         RoundedButton(text: "SIGNUP", press: () => doUserRegistration()),
         existingAccount(
           press: () {
@@ -81,7 +96,6 @@ class Body extends StatelessWidget {
           login: false,
         )
       ],
-    ))
-    ;
+    ));
   }
 }
