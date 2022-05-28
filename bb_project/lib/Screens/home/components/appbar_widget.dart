@@ -9,7 +9,7 @@ AppBar buildAppBar (BuildContext context) {
     backgroundColor: kPrimaryColor,
     elevation: 0,
     actions: [
-      IconButton(onPressed: () {}, icon: const Icon(icon))
+      IconButton(onPressed: () {Navigator.pop(context, true);}, icon: const Icon(icon))
     ],
   );
 }
