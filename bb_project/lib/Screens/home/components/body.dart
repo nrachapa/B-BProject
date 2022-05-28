@@ -11,6 +11,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import '../../Message.dart';
 import 'appbar_widget.dart';
 import 'hours_widget.dart';
+import 'logout_widget.dart';
 
 class Body extends StatelessWidget {
   ParseUser? currentUser;
@@ -23,23 +24,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const user = UserPreferences.myUser;
-    void doUserLogout() async {
-      var response = await currentUser!.logout();
-      if (response.success) {
-        Message.showSuccess(
-            context: context,
-            message: 'User was successfully logout!',
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-                    (Route<dynamic> route) => false,
-              );
-            });
-      } else {
-        Message.showError(context: context, message: response.error!.message);
-      }
-    }
+
 
     return Scaffold(
       appBar: buildAppBar(context),
@@ -59,14 +44,7 @@ class Body extends StatelessWidget {
           const SizedBox(height: 50),
           Center(child: submitHourButton(user)),
           const SizedBox(height: 20),
-          Center(child: logoutButton(user)),
-        // Container(
-        //       height: 50,
-        //       child: ElevatedButton(
-        //         child: const Text('Logout'),
-        //         onPressed: () => doUserLogout(),
-        //       ),
-        //     ),
+          Center(child: logoutButton(user, context)),
           ],
       )
       // body: FutureBuilder<ParseUser?>(
@@ -138,9 +116,26 @@ class Body extends StatelessWidget {
         onClicked: () {});
   }
 
-  Widget logoutButton(User user) {
+  Widget logoutButton(User user, BuildContext context) {
+    void doUserLogout() async {
+      var response = await currentUser!.logout();
+      if (response.success) {
+        Message.showSuccess(
+            context: context,
+            message: 'User was successfully logout!',
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (Route<dynamic> route) => false,
+              );
+            });
+      } else {
+        Message.showError(context: context, message: response.error!.message);
+      }
+    }
     return ButtonWidget(
         text: "Logout",
-        onClicked: () {});
+        onClicked: () => doUserLogout());
   }
 }
