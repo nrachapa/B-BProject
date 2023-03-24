@@ -1,3 +1,4 @@
+import 'package:bb_project/Screens/admin/admin_screen.dart';
 import 'package:bb_project/Screens/login/components/background.dart';
 import 'package:bb_project/Screens/signup/signup_screen.dart';
 import 'package:bb_project/Screens/home/home_screen.dart';
@@ -28,7 +29,14 @@ class Body extends StatelessWidget {
       final user = ParseUser(username, password, null);
 
       var response = await user.login();
-      if (response.success) {
+      const ADMIN = true;
+      if (response.success & ADMIN) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => AdminScreen()),
+              (Route<dynamic> route) => false,
+        );
+      } else if (response.success) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),

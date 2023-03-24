@@ -10,20 +10,21 @@ void main() async {
   final keyClientKey = 'RnSq2s6e1SRdKUL30JGcP7tHb0hn6mhTDygJ4A0x';
   final keyParseServerUrl = 'https://parseapi.back4app.com';
 
-  await Parse().initialize(keyApplicationId, keyParseServerUrl, clientKey: keyClientKey, autoSendSessionId: true);
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, autoSendSessionId: true);
 
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   Future<bool> hasUserLogged() async {
     ParseUser currentUser = await ParseUser.currentUser() as ParseUser;
     if (currentUser == null) {
       return false;
     }
     //Checks whether the user's session token is valid
-    final ParseResponse parseResponse = await ParseUser.getCurrentUserFromServer(currentUser.sessionToken);
+    final ParseResponse parseResponse =
+        await ParseUser.getCurrentUserFromServer(currentUser.sessionToken);
 
     if (parseResponse?.success == null || !parseResponse.success) {
       //Invalid session. Logout
@@ -46,8 +47,7 @@ class MyApp extends StatelessWidget {
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home:  WelcomeScreen(),
+      home: WelcomeScreen(),
     );
   }
 }
-

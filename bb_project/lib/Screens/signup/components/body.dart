@@ -54,10 +54,8 @@ class Body extends StatelessWidget {
         Message.showError(context: context, message: response.error!.message);
       }
     }
-
     Size size = MediaQuery.of(context).size;
     return Background(
-
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -71,10 +69,6 @@ class Body extends StatelessWidget {
           textController: controllerNewFirstName,
         ),
         LastName(hintText: "Last Name", textController: controllerNewLastName),
-        EmployeeID(
-          hintText: "Employee ID",
-          textController: controllerNewEmployeeID,
-        ),
         RoundedPasswordField(
           controllerText: controllerNewPassword,
         ),
