@@ -12,7 +12,7 @@ import '../../hours/components/user_preference.dart';
 import '../../hours/hours_screen.dart';
 import 'button_widget.dart';
 
-const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
+const List<String> list = <String>['Add Task 1', 'Add Task 2', 'Add Task 3', 'Add Task 4'];
 final List<String> entries = <String>['A', 'B', 'C'];
 final List<int> colorCodes = <int>[600, 500, 100];
 
@@ -62,9 +62,10 @@ class Body extends StatelessWidget {
                           padding: const EdgeInsets.all(20),
                           child: const DropdownButtonExample(),
                         ),
-                        // const SizedBox(
-                        //   child: MyStatefulWidget(),
-                        // ),
+                        const SizedBox(
+                          height: 300,
+                          child: MyStatefulWidget(),
+                        ),
                         Container(
                           padding: const EdgeInsets.all(20),
                           child: projectButton(user, context),
@@ -135,17 +136,17 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       return Row(
         children: <Widget>[
           SizedBox(
-              width: 20.0,
+              width: 350,
               child: Scrollbar(
                 thumbVisibility: true,
                 controller: _firstController,
                 child: ListView.builder(
                     controller: _firstController,
-                    itemCount: 5,
+                    itemCount: 50,
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child: Text('Scrollable 1 : Index $index'),
+                        child: Text('Task $index'),
                       );
                     }),
               )),
