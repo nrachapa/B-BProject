@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bb_project/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -10,13 +12,13 @@ class ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: kPrimaryColor,
-        onPrimary: Colors.white,
+        foregroundColor: Colors.white, backgroundColor: kPrimaryColor,
         shape: const StadiumBorder(),
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20)
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20)
       ),
       onPressed: onClicked,
       child: Text(text, style: const TextStyle(fontSize: 24)),
+      
     );
   }
 }
