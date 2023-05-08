@@ -1,7 +1,5 @@
-import 'package:bb_project/Screens/home/components/background.dart';
 import 'package:bb_project/Screens/home/components/user.dart';
 import 'package:bb_project/Screens/login/login_screen.dart';
-import 'package:bb_project/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -156,12 +154,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   }
 }
 
-
-
-
-
-
-
+// Code for Drop down menu 
 class DropdownButtonExample extends StatefulWidget {
   const DropdownButtonExample({super.key});
 

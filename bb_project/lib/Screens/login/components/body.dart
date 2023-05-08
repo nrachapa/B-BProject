@@ -1,5 +1,7 @@
 import 'package:bb_project/Screens/admin/admin_screen.dart';
+import "package:bb_project/Screens/project/project_screen.dart";
 import 'package:bb_project/Screens/login/components/background.dart';
+import 'package:bb_project/Screens/project/project_screen.dart';
 import 'package:bb_project/Screens/signup/signup_screen.dart';
 import 'package:bb_project/Screens/home/home_screen.dart';
 import 'package:bb_project/components/forgot_password.dart';
@@ -21,7 +23,6 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     void doUserLogin() async {
       final username = controllerUsername.text.trim();
       final password = controllerPassword.text.trim();
@@ -29,27 +30,26 @@ class Body extends StatelessWidget {
       final user = ParseUser(username, password, null);
 
       var response = await user.login();
-      const ADMIN = true;
+      // needs to be a way to verify admin, for now we are manually doing this
+      const ADMIN = false;
       if (response.success & ADMIN) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => AdminScreen()),
-              (Route<dynamic> route) => false,
+          MaterialPageRoute(builder: (context) => const AdminScreen()),
+          (Route<dynamic> route) => false,
         );
       } else if (response.success) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-              (Route<dynamic> route) => false,
+          MaterialPageRoute(builder: (context) => ProjectScreen()),
+          (Route<dynamic> route) => false,
         );
       } else {
         Message.showError(context: context, message: response.error!.message);
       }
     }
 
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
     return Background(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -91,4 +91,3 @@ class Body extends StatelessWidget {
     );
   }
 }
-
