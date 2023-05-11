@@ -1,5 +1,8 @@
 import 'package:bb_project/Screens/home/components/user.dart';
 import 'package:bb_project/Screens/login/login_screen.dart';
+import 'package:bb_project/components/scrollable_widget.dart';
+import 'package:bb_project/data/user.dart';
+import 'package:bb_project/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -19,10 +22,10 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeLeft,
+    //   DeviceOrientation.landscapeRight,
+    // ]);
 
     return Scaffold(
         appBar: AppBar(
@@ -74,64 +77,8 @@ class Body extends StatelessWidget {
                                     ),
                                   ),
                                 ])),
-                        Center(
-                            child: Column(children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.all(0),
-                            child: Table(
-                              defaultColumnWidth: FixedColumnWidth(100.0),
-                              border: TableBorder.all(
-                                  color: Colors.black,
-                                  style: BorderStyle.solid,
-                                  width: 2),
-                              children: [
-                                TableRow(children: [
-                                  Column(children: const [
-                                    Text('NAME',
-                                        style: TextStyle(fontSize: 20.0))
-                                  ]),
-                                  Column(children: const [
-                                    Text('START',
-                                        style: TextStyle(fontSize: 20.0))
-                                  ]),
-                                  Column(children: const [
-                                    Text('STATUS',
-                                        style: TextStyle(fontSize: 20.0))
-                                  ]),
-                                  Column(children: const [
-                                    Text('STATUS',
-                                        style: TextStyle(fontSize: 20.0))
-                                  ]),
-                                ]),
-                                TableRow(children: [
-                                  Column(children: [Text('Javatpoint')]),
-                                  Column(children: [Text('Flutter')]),
-                                  Column(children: [Text('5*')]),
-                                  Column(children: [Text('5*')]),
-                                ]),
-                                TableRow(children: [
-                                  Column(children: [Text('Javatpoint')]),
-                                  Column(children: [Text('MySQL')]),
-                                  Column(children: [Text('5*')]),
-                                  Column(children: [Text('5*')]),
-                                ]),
-                                TableRow(children: [
-                                  Column(children: [Text('Javatpoint')]),
-                                  Column(children: [Text('ReactJS')]),
-                                  Column(children: [Text('5*')]),
-                                  Column(children: [Text('5*')]),
-                                ]),
-                                TableRow(children: [
-                                  Column(children: [Text('Javatpoint')]),
-                                  Column(children: [Text('ReactJS')]),
-                                  Column(children: [Text('5*')]),
-                                  Column(children: [Text('5*')]),
-                                ]),
-                              ],
-                            ),
-                          ),
-                        ])),
-                        // Task table
+                        // Datatable call
+                        SortablePage(),
                         Container(
                           padding: const EdgeInsets.all(0),
                           // height: 24,
@@ -189,65 +136,79 @@ class Body extends StatelessWidget {
   }
 }
 
-class MyStatelessWidget extends StatelessWidget {
-  const MyStatelessWidget({super.key});
+// DataTable call
+class SortablePage extends StatefulWidget {
+  @override
+  _SortablePageState createState() => _SortablePageState();
+}
+
+class _SortablePageState extends State<SortablePage> {
+  late List<SampleUser> sampleusers;
+  int? sortColumnIndex;
+  bool isAscending = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(),
-      columnWidths: const <int, TableColumnWidth>{
-        0: IntrinsicColumnWidth(),
-        // 1: FlexColumnWidth(),
-        //2: FixedColumnWidth(40),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: <TableRow>[
-        TableRow(
-          children: <Widget>[
-            Container(
-              height: 32,
-              //color: Colors.green,
-            ),
-            TableCell(
-              verticalAlignment: TableCellVerticalAlignment.top,
-              child: Container(
-                height: 32,
-                width: 32,
+  void initState() {
+    super.initState();
 
-                //color: Colors.red,
-              ),
-            ),
-            Container(
-              height: 64,
-              //color: Colors.blue,
-            ),
-          ],
-        ),
-        TableRow(
-          decoration: const BoxDecoration(
-              //color: Colors.grey,
-              ),
-          children: <Widget>[
-            Container(
-              height: 64,
-              width: 128,
-              //color: Colors.purple,
-            ),
-            Container(
-              height: 32,
-              //color: Colors.yellow,
-            ),
-            Center(
-              child: Container(
-                height: 32,
-                width: 32,
-                //color: Colors.orange,
-              ),
-            ),
-          ],
-        ),
-      ],
+    this.sampleusers = List.of(allSampleUsers);
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: ScrollableWidget(child: buildDataTable()),
+      );
+
+  Widget buildDataTable() {
+    final columns = ['First Name', 'Last Name', 'Age'];
+
+    return DataTable(
+      sortAscending: isAscending,
+      sortColumnIndex: sortColumnIndex,
+      columns: getColumns(columns),
+      rows: getRows(sampleusers),
     );
   }
+
+  List<DataColumn> getColumns(List<String> columns) => columns
+      .map((String column) => DataColumn(
+            label: Text(column),
+            onSort: onSort,
+          ))
+      .toList();
+
+  List<DataRow> getRows(List<SampleUser> sampleusers) =>
+      sampleusers.map((SampleUser sampleusers) {
+        final cells = [
+          sampleusers.firstName,
+          sampleusers.lastName,
+          sampleusers.age
+        ];
+
+        return DataRow(cells: getCells(cells));
+      }).toList();
+
+  List<DataCell> getCells(List<dynamic> cells) =>
+      cells.map((data) => DataCell(Text('$data'))).toList();
+
+  void onSort(int columnIndex, bool ascending) {
+    if (columnIndex == 0) {
+      sampleusers.sort((user1, user2) =>
+          compareString(ascending, user1.firstName, user2.firstName));
+    } else if (columnIndex == 1) {
+      sampleusers.sort((user1, user2) =>
+          compareString(ascending, user1.lastName, user2.lastName));
+    } else if (columnIndex == 2) {
+      sampleusers.sort((user1, user2) =>
+          compareString(ascending, '${user1.age}', '${user2.age}'));
+    }
+
+    setState(() {
+      this.sortColumnIndex = columnIndex;
+      this.isAscending = ascending;
+    });
+  }
+
+  int compareString(bool ascending, String value1, String value2) =>
+      ascending ? value1.compareTo(value2) : value2.compareTo(value1);
 }
