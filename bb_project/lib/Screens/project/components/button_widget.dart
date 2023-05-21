@@ -14,7 +14,7 @@ class ButtonWidget extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white, backgroundColor: kPrimaryColor,
         shape: const StadiumBorder(),
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0)
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0)
       ),
       onPressed: onClicked,
       child: Text(text, style: const TextStyle(fontSize: 24)),

@@ -22,16 +22,16 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.landscapeLeft,
-    //   DeviceOrientation.landscapeRight,
-    // ]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Profile'),
-          backgroundColor: const Color(0xffe56666),
-        ),
+            title: const Text('Profile'),
+            backgroundColor: const Color(0xffe56666),
+            actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))]),
         body: FutureBuilder<ParseUser?>(
             future: getUser(),
             builder: (context, snapshot) {
@@ -56,7 +56,6 @@ class Body extends StatelessWidget {
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const SizedBox(height: 16),
                                   Text(
                                     'Hello, ${snapshot.data!.username}',
                                     style: const TextStyle(
@@ -64,31 +63,31 @@ class Body extends StatelessWidget {
                                     ),
                                   ),
                                 ])),
-                        Container(
-                            padding: const EdgeInsets.all(0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'Email: ${snapshot.data!.emailAddress}',
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ])),
+                        // Container(
+                        //     padding: const EdgeInsets.all(0),
+                        //     child: Row(
+                        //         mainAxisAlignment: MainAxisAlignment.center,
+                        //         children: [
+                        //           const SizedBox(height: 16),
+                        //           Text(
+                        //             'Email: ${snapshot.data!.emailAddress}',
+                        //             style: const TextStyle(
+                        //               fontSize: 15,
+                        //             ),
+                        //           ),
+                        //         ])),
                         // Datatable call
-                        SortablePage(),
+                        const DataTableColumn(tableCount: 1, rowCount: 100),
+                        // Container(
+                        //   padding: const EdgeInsets.all(0),
+                        //   // height: 24,
+                        //   // width: 24,
+                        //   child: projectButton(user, context),
+                        // ),
                         Container(
-                          padding: const EdgeInsets.all(0),
-                          // height: 24,
-                          // width: 24,
-                          child: projectButton(user, context),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(0),
-                          // height: 24,
-                          // width: 24,
+                          padding: const EdgeInsets.all(10.0),
+                          // height: 30,
+                          // width: 12,
                           child: logoutButton(user, context),
                         ),
                       ],
@@ -137,78 +136,85 @@ class Body extends StatelessWidget {
 }
 
 // DataTable call
-class SortablePage extends StatefulWidget {
-  @override
-  _SortablePageState createState() => _SortablePageState();
-}
+class DataTableColumn extends StatelessWidget {
+  final int tableCount;
+  final int rowCount;
 
-class _SortablePageState extends State<SortablePage> {
-  late List<SampleUser> sampleusers;
-  int? sortColumnIndex;
-  bool isAscending = false;
+  const DataTableColumn(
+      {super.key, required this.tableCount, required this.rowCount});
 
   @override
-  void initState() {
-    super.initState();
-
-    this.sampleusers = List.of(allSampleUsers);
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: ScrollableWidget(child: buildDataTable()),
-      );
-
-  Widget buildDataTable() {
-    final columns = ['First Name', 'Last Name', 'Age'];
-
-    return DataTable(
-      sortAscending: isAscending,
-      sortColumnIndex: sortColumnIndex,
-      columns: getColumns(columns),
-      rows: getRows(sampleusers),
+  Widget build(BuildContext context) {
+    return SizedBox(
+      //width: 100,
+      height: 200, // Adjust this to fit your needs
+      child: ListView.builder(
+        itemCount: tableCount,
+        itemBuilder: (context, tableIndex) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              columnSpacing: 135,
+              columns: const <DataColumn>[
+                DataColumn(
+                  label: Expanded(
+                    child: Text(
+                      'Name',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: Expanded(
+                    child: Text(
+                      'Start',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: Expanded(
+                    child: Text(
+                      'Status',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: Expanded(
+                    child: Text(
+                      'Your Time',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ),
+                DataColumn(
+                  label: Expanded(
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ),
+              ],
+              rows: List<DataRow>.generate(
+                rowCount,
+                (int rowIndex) => DataRow(
+                  cells: <DataCell>[
+                    DataCell(Text(
+                        'Project ${(tableIndex * rowCount) + rowIndex + 1}')),
+                    DataCell(Text("10:0$rowIndex")),
+                    const DataCell(Text("Working")),
+                    DataCell(
+                        Text('Time ${(tableIndex * rowCount) + rowIndex + 1}')),
+                    const DataCell(Text(""), showEditIcon: true),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
-
-  List<DataColumn> getColumns(List<String> columns) => columns
-      .map((String column) => DataColumn(
-            label: Text(column),
-            onSort: onSort,
-          ))
-      .toList();
-
-  List<DataRow> getRows(List<SampleUser> sampleusers) =>
-      sampleusers.map((SampleUser sampleusers) {
-        final cells = [
-          sampleusers.firstName,
-          sampleusers.lastName,
-          sampleusers.age
-        ];
-
-        return DataRow(cells: getCells(cells));
-      }).toList();
-
-  List<DataCell> getCells(List<dynamic> cells) =>
-      cells.map((data) => DataCell(Text('$data'))).toList();
-
-  void onSort(int columnIndex, bool ascending) {
-    if (columnIndex == 0) {
-      sampleusers.sort((user1, user2) =>
-          compareString(ascending, user1.firstName, user2.firstName));
-    } else if (columnIndex == 1) {
-      sampleusers.sort((user1, user2) =>
-          compareString(ascending, user1.lastName, user2.lastName));
-    } else if (columnIndex == 2) {
-      sampleusers.sort((user1, user2) =>
-          compareString(ascending, '${user1.age}', '${user2.age}'));
-    }
-
-    setState(() {
-      this.sortColumnIndex = columnIndex;
-      this.isAscending = ascending;
-    });
-  }
-
-  int compareString(bool ascending, String value1, String value2) =>
-      ascending ? value1.compareTo(value2) : value2.compareTo(value1);
 }
