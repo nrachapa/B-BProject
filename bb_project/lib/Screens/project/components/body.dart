@@ -38,8 +38,8 @@ class Body extends StatelessWidget {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
                 case ConnectionState.waiting:
-                  return Center(
-                    child: Container(
+                  return const Center(
+                    child: SizedBox(
                         width: 100,
                         height: 100,
                         child: CircularProgressIndicator()),
@@ -63,31 +63,10 @@ class Body extends StatelessWidget {
                                     ),
                                   ),
                                 ])),
-                        // Container(
-                        //     padding: const EdgeInsets.all(0),
-                        //     child: Row(
-                        //         mainAxisAlignment: MainAxisAlignment.center,
-                        //         children: [
-                        //           const SizedBox(height: 16),
-                        //           Text(
-                        //             'Email: ${snapshot.data!.emailAddress}',
-                        //             style: const TextStyle(
-                        //               fontSize: 15,
-                        //             ),
-                        //           ),
-                        //         ])),
                         // Datatable call
                         const DataTableColumn(tableCount: 1, rowCount: 100),
-                        // Container(
-                        //   padding: const EdgeInsets.all(0),
-                        //   // height: 24,
-                        //   // width: 24,
-                        //   child: projectButton(user, context),
-                        // ),
                         Container(
                           padding: const EdgeInsets.all(10.0),
-                          // height: 30,
-                          // width: 12,
                           child: logoutButton(user, context),
                         ),
                       ],
