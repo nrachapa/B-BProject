@@ -1,6 +1,7 @@
 import 'package:bb_project/Screens/admin/admin_screen.dart';
-import 'package:bb_project/Screens/project_screen_1/project_screen.dart';
+import 'package:bb_project/Screens/project_screen_1/project_screen_1.dart';
 import 'package:bb_project/Screens/login/components/background.dart';
+import 'package:bb_project/Screens/project_screen_2/project_screen_2.dart';
 import 'package:bb_project/Screens/signup/signup_screen.dart';
 import 'package:bb_project/components/forgot_password.dart';
 import 'package:bb_project/components/rounded_button.dart';
@@ -24,25 +25,19 @@ class Body extends StatelessWidget {
     void doUserLogin() async {
       final username = controllerUsername.text.trim();
       final password = controllerPassword.text.trim();
-
       final user = ParseUser(username, password, null);
 
       var response = await user.login();
       // needs to be a way to verify admin, for now we are manually doing this
-      const ADMIN = false;
-      if (response.success & ADMIN) {
+      // const ADMIN = false;
+      // Change the screens as per your preference of work for now
+      if (response.success) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const AdminScreen()),
-          (Route<dynamic> route) => false,
+          MaterialPageRoute(builder: (context) => ProjectScreen2()),
+              (Route<dynamic> route) => false,
         );
-      } else if (response.success) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const ProjectScreen()),
-          (Route<dynamic> route) => false,
-        );
-      } else {
+      }  else {
         Message.showError(context: context, message: response.error!.message);
       }
     }
