@@ -20,15 +20,17 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
     ]);
 
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Profile'),
+            title: const Text('Tasks'),
             backgroundColor: const Color(0xffe56666),
-            actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))]),
+            actions: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+            ]),
         body: FutureBuilder<ParseUser?>(
             future: getUser(),
             builder: (context, snapshot) {
@@ -43,25 +45,26 @@ class Body extends StatelessWidget {
                   );
                 default:
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(25.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                            padding: const EdgeInsets.all(0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Hello, ${snapshot.data!.username}',
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ])),
                         // Datatable call
                         const DataTableColumn(tableCount: 1, rowCount: 100),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color(0xffe56666), // background (button) color
+                            foregroundColor:
+                                Colors.white, // foreground (text) color
+                            padding: const EdgeInsets.all(10.0),
+                            shape: const StadiumBorder(),
+                          ),
+                          // prints out in terminal
+                          onPressed: () => print('pressed and saved'),
+                          child: const Text('Save', style: TextStyle(fontSize: 18),),
+                        ),
                         Container(
                           padding: const EdgeInsets.all(10.0),
                           child: logoutButton(user, context),
@@ -123,52 +126,28 @@ class DataTableColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       //width: 100,
-      height: 200, // Adjust this to fit your needs
+      height: 650, // Adjust this to fit your needs
       child: ListView.builder(
         itemCount: tableCount,
         itemBuilder: (context, tableIndex) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              columnSpacing: 135,
+              columnSpacing:190,
               columns: const <DataColumn>[
                 DataColumn(
                   label: Expanded(
                     child: Text(
-                      'Name',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                      'Task Name',
+                      //style: TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ),
                 DataColumn(
                   label: Expanded(
                     child: Text(
-                      'Start',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      'Status',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      'Your Time',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      'Edit',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                      'Completed',
+                      //style: TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ),
@@ -177,13 +156,11 @@ class DataTableColumn extends StatelessWidget {
                 rowCount,
                 (int rowIndex) => DataRow(
                   cells: <DataCell>[
-                    DataCell(Text(
-                        'Project ${(tableIndex * rowCount) + rowIndex + 1}')),
-                    DataCell(Text("10:0$rowIndex")),
-                    const DataCell(Text("Working")),
                     DataCell(
-                        Text('Time ${(tableIndex * rowCount) + rowIndex + 1}')),
-                    const DataCell(Text(""), showEditIcon: true),
+                        Text('Task ${(tableIndex * rowCount) + rowIndex + 1}')),
+                    const DataCell(ElevatedButton(
+                        onPressed: null,
+                        child: Icon(Icons.check_box_outline_blank_rounded))),
                   ],
                 ),
               ),

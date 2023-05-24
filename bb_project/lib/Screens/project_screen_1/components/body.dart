@@ -1,5 +1,6 @@
 import 'package:bb_project/Screens/home/components/user.dart';
 import 'package:bb_project/Screens/login/login_screen.dart';
+import 'package:bb_project/Screens/project_screen_2/project_screen_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -26,7 +27,7 @@ class Body extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Profile'),
+            title: const Text('Your Projects'),
             backgroundColor: const Color(0xffe56666),
             actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))]),
         body: FutureBuilder<ParseUser?>(
@@ -43,7 +44,7 @@ class Body extends StatelessWidget {
                   );
                 default:
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -123,52 +124,36 @@ class DataTableColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       //width: 100,
-      height: 600, // Adjust this to fit your needs
+      height: 650, // Adjust this to fit your needs
       child: ListView.builder(
         itemCount: tableCount,
         itemBuilder: (context, tableIndex) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              columnSpacing: 100,
+              columnSpacing: 80,
               columns: const <DataColumn>[
                 DataColumn(
                   label: Expanded(
                     child: Text(
                       'Name',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                      // style: TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ),
-                // DataColumn(
-                //   label: Expanded(
-                //     child: Text(
-                //       'Start',
-                //       style: TextStyle(fontStyle: FontStyle.italic),
-                //     ),
-                //   ),
-                // ),
                 DataColumn(
                   label: Expanded(
                     child: Text(
                       'Status',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                      // style: TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ),
-                // DataColumn(
-                //   label: Expanded(
-                //     child: Text(
-                //       'Your Time',
-                //       style: TextStyle(fontStyle: FontStyle.italic),
-                //     ),
-                //   ),
-                // ),
                 DataColumn(
                   label: Expanded(
                     child: Text(
-                      'Edit',
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                      '',
+                      // style: TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ),
@@ -179,11 +164,20 @@ class DataTableColumn extends StatelessWidget {
                   cells: <DataCell>[
                     DataCell(Text(
                         'Project ${(tableIndex * rowCount) + rowIndex + 1}')),
-                    //DataCell(Text("10:0$rowIndex")),
                     const DataCell(Text("Working")),
-                    //DataCell(
-                        //Text('Time ${(tableIndex * rowCount) + rowIndex + 1}')),
-                    const DataCell(Text(""), showEditIcon: true),
+                    DataCell(ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color(0xffe56666), // background (button) color
+                            foregroundColor:
+                                Colors.white, // foreground (text) color
+                            padding: const EdgeInsets.all(0.0),
+                            shape: const StadiumBorder(),
+                          ),
+                          // prints out in terminal
+                          onPressed: () => const ProjectScreen2(),
+                          child: const Text('Edit', style: TextStyle(fontSize: 15),),
+                        ),),
                   ],
                 ),
               ),
