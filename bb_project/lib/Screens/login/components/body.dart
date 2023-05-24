@@ -26,18 +26,22 @@ class Body extends StatelessWidget {
       final username = controllerUsername.text.trim();
       final password = controllerPassword.text.trim();
       final user = ParseUser(username, password, null);
-
       var response = await user.login();
-      // needs to be a way to verify admin, for now we are manually doing this
-      // const ADMIN = false;
-      // Change the screens as per your preference of work for now
-      if (response.success) {
+      await user.fetch();
+      final ADMIN = user.get('admin') ?? false;
+      if (response.success & ADMIN) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => ProjectScreen2()),
-              (Route<dynamic> route) => false,
+          MaterialPageRoute(builder: (context) => const AdminScreen()),
+          (Route<dynamic> route) => false,
         );
-      }  else {
+      } else if (response.success & !ADMIN) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const ProjectScreen1()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
         Message.showError(context: context, message: response.error!.message);
       }
     }
