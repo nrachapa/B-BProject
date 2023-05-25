@@ -1,7 +1,7 @@
 import 'package:bb_project/Screens/admin/admin_screen.dart';
-import "package:bb_project/Screens/project/project_screen.dart";
+import "package:bb_project/Screens/project_screen_1/project_screen_1.dart";
 import 'package:bb_project/Screens/login/components/background.dart';
-import 'package:bb_project/Screens/project/project_screen.dart';
+import 'package:bb_project/Screens/project_screen_2/project_screen_2.dart';
 import 'package:bb_project/Screens/signup/signup_screen.dart';
 import 'package:bb_project/Screens/home/home_screen.dart';
 import 'package:bb_project/components/forgot_password.dart';
@@ -54,7 +54,7 @@ class Body extends StatelessWidget {
         // Navigate to the ProjectScreen and remove all previous routes from the stack
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => ProjectScreen()),
+          MaterialPageRoute(builder: (context) => ProjectScreen1()),
           (Route<dynamic> route) => false,
         );
       } else {

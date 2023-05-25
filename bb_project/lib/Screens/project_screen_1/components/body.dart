@@ -29,7 +29,9 @@ class Body extends StatelessWidget {
         appBar: AppBar(
             title: const Text('Your Projects'),
             backgroundColor: const Color(0xffe56666),
-            actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))]),
+            actions: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+            ]),
         body: FutureBuilder<ParseUser?>(
             future: getUser(),
             builder: (context, snapshot) {
@@ -117,74 +119,98 @@ class DataTableColumn extends StatelessWidget {
   final int tableCount;
   final int rowCount;
 
-  const DataTableColumn(
-      {super.key, required this.tableCount, required this.rowCount});
+  const DataTableColumn({
+    Key? key,
+    required this.tableCount,
+    required this.rowCount,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      //width: 100,
       height: 650, // Adjust this to fit your needs
       child: ListView.builder(
         itemCount: tableCount,
         itemBuilder: (context, tableIndex) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columnSpacing: 80,
-              columns: const <DataColumn>[
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      'Name',
-                      // style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      'Status',
-                      // style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      '',
-                      // style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-              ],
-              rows: List<DataRow>.generate(
-                rowCount,
-                (int rowIndex) => DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text(
-                        'Project ${(tableIndex * rowCount) + rowIndex + 1}')),
-                    const DataCell(Text("Working")),
-                    DataCell(ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xffe56666), // background (button) color
-                            foregroundColor:
-                                Colors.white, // foreground (text) color
-                            padding: const EdgeInsets.all(0.0),
-                            shape: const StadiumBorder(),
+            child: FutureBuilder<List>(
+              future: fetchData(), // Call the fetchData method asynchronously
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator(); // Show a loading indicator while waiting for the data
+                } else if (snapshot.hasError) {
+                  return Text(
+                      'Error: ${snapshot.error}'); // Show an error message if an error occurs
+                } else {
+                  final dataList = snapshot.data;
+                  return DataTable(
+                    columnSpacing: 80,
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          'Name',
+                          // style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Status',
+                          // style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          '',
+                          // style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ],
+                    rows: dataList!
+                        .map(
+                          (data) => DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text(data.get<String>('Name'))),
+                              const DataCell(Text("Working")),
+                              DataCell(
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xffe56666),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(0.0),
+                                    shape: const StadiumBorder(),
+                                  ),
+                                  onPressed: () => const ProjectScreen2(),
+                                  child: const Text(
+                                    'Edit',
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          // prints out in terminal
-                          onPressed: () => const ProjectScreen2(),
-                          child: const Text('Edit', style: TextStyle(fontSize: 15),),
-                        ),),
-                  ],
-                ),
-              ),
+                        )
+                        .toList(),
+                  );
+                }
+              },
             ),
           );
         },
       ),
     );
+  }
+
+  Future<List<ParseObject>> fetchData() async {
+    final QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject('Projects'));
+
+    final response = await query.query();
+    if (response.success && response.results != null) {
+      final resultList = response.results as List<ParseObject>;
+      return resultList;
+    } else {
+      return []; // Ensure the error is non-null
+    }
   }
 }
