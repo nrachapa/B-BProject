@@ -1,9 +1,8 @@
 import 'package:bb_project/Screens/admin/admin_screen.dart';
-import "package:bb_project/Screens/project/project_screen.dart";
+import 'package:bb_project/Screens/project_screen_1/project_screen_1.dart';
 import 'package:bb_project/Screens/login/components/background.dart';
-import 'package:bb_project/Screens/project/project_screen.dart';
+import 'package:bb_project/Screens/project_screen_2/project_screen_2.dart';
 import 'package:bb_project/Screens/signup/signup_screen.dart';
-import 'package:bb_project/Screens/home/home_screen.dart';
 import 'package:bb_project/components/forgot_password.dart';
 import 'package:bb_project/components/rounded_button.dart';
 import 'package:bb_project/components/rounded_input_field.dart';
@@ -23,38 +22,17 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Function to handle user login
     void doUserLogin() async {
-      // Get the username and password from the input fields
       final username = controllerUsername.text.trim();
       final password = controllerPassword.text.trim();
-
-      // Create a ParseUser object with the provided username and password
       final user = ParseUser(username, password, null);
-
-      // Perform the login operation and wait for the response
       var response = await user.login();
-
-      // Fetch the user's data from the server
       await user.fetch();
-
-      // Check if the user is an admin by accessing the 'admin' field from the user object
       final ADMIN = user.get('admin') ?? false;
-
-      // If the login was successful and the user is an admin
       if (response.success & ADMIN) {
-        // Navigate to the AdminScreen and remove all previous routes from the stack
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const AdminScreen()),
-          (Route<dynamic> route) => false,
-        );
-        // If the login was successful and the user is not an admin
-      } else if (response.success & (ADMIN == false)) {
-        // Navigate to the ProjectScreen and remove all previous routes from the stack
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => ProjectScreen()),
           (Route<dynamic> route) => false,
         );
       } else {
