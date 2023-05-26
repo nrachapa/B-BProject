@@ -17,6 +17,11 @@ class Body extends StatelessWidget {
     return currentUser;
   }
 
+  void showInfo(BuildContext context) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Info saved')));
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -54,17 +59,19 @@ class Body extends StatelessWidget {
                         const DataTableColumn(tableCount: 1, rowCount: 100),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xffe56666), // background (button) color
-                            foregroundColor:
-                                Colors.white, // foreground (text) color
+                            backgroundColor: const Color(0xffe56666),
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.all(10.0),
                             shape: const StadiumBorder(),
                           ),
-                          // prints out in terminal
-                          onPressed: () => print('pressed and saved'),
-                          child: const Text('Save', style: TextStyle(fontSize: 18),),
+                          onPressed: () {
+                            print('pressed and saved');
+                            showInfo(context);
+                          },
+                          child: const Text('Save',
+                              style: TextStyle(fontSize: 18)),
                         ),
+
                         Container(
                           padding: const EdgeInsets.all(10.0),
                           child: logoutButton(user, context),
@@ -101,7 +108,7 @@ class Body extends StatelessWidget {
             onPressed: () {
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
                 (Route<dynamic> route) => false,
               );
             });
@@ -115,52 +122,66 @@ class Body extends StatelessWidget {
 }
 
 // DataTable call
-class DataTableColumn extends StatelessWidget {
+// DataTable call
+class DataTableColumn extends StatefulWidget {
   final int tableCount;
   final int rowCount;
 
   const DataTableColumn(
-      {super.key, required this.tableCount, required this.rowCount});
+      {Key? key, required this.tableCount, required this.rowCount})
+      : super(key: key);
+
+  @override
+  _DataTableColumnState createState() => _DataTableColumnState();
+}
+
+class _DataTableColumnState extends State<DataTableColumn> {
+  late List<bool> checked; // List to hold checkbox states
+
+  @override
+  void initState() {
+    super.initState();
+    checked = List.filled(widget.rowCount * widget.tableCount, false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      //width: 100,
-      height: 650, // Adjust this to fit your needs
+      height: 650,
       child: ListView.builder(
-        itemCount: tableCount,
+        itemCount: widget.tableCount,
         itemBuilder: (context, tableIndex) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              columnSpacing:190,
+              columnSpacing: 190,
               columns: const <DataColumn>[
                 DataColumn(
                   label: Expanded(
-                    child: Text(
-                      'Task Name',
-                      //style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
+                    child: Text('Task Name'),
                   ),
                 ),
                 DataColumn(
                   label: Expanded(
-                    child: Text(
-                      'Completed',
-                      //style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
+                    child: Text('Completed'),
                   ),
                 ),
               ],
               rows: List<DataRow>.generate(
-                rowCount,
+                widget.rowCount,
                 (int rowIndex) => DataRow(
                   cells: <DataCell>[
-                    DataCell(
-                        Text('Task ${(tableIndex * rowCount) + rowIndex + 1}')),
-                    const DataCell(ElevatedButton(
-                        onPressed: null,
-                        child: Icon(Icons.check_box_outline_blank_rounded))),
+                    DataCell(Text(
+                        'Task ${(tableIndex * widget.rowCount) + rowIndex + 1}')),
+                    DataCell(Checkbox(
+                      value: checked[(tableIndex * widget.rowCount) + rowIndex],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          checked[(tableIndex * widget.rowCount) + rowIndex] =
+                              value!;
+                        });
+                      },
+                    )),
                   ],
                 ),
               ),

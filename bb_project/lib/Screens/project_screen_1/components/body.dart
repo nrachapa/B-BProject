@@ -174,8 +174,14 @@ class DataTableColumn extends StatelessWidget {
                             padding: const EdgeInsets.all(0.0),
                             shape: const StadiumBorder(),
                           ),
-                          // prints out in terminal
-                          onPressed: () => const ProjectScreen2(),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProjectScreen2(),
+                              ),
+                            );
+                          },
                           child: const Text('Edit', style: TextStyle(fontSize: 15),),
                         ),),
                   ],
