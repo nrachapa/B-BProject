@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bb_project/Screens/home/components/user.dart';
 import 'package:bb_project/Screens/login/login_screen.dart';
 import 'package:bb_project/Screens/project_screen_2/project_screen_2.dart';
@@ -93,20 +95,22 @@ class Body extends StatelessWidget {
 
   Widget logoutButton(User user, BuildContext context) {
     void doUserLogout() async {
-      var response = await currentUser!.logout();
-      if (response.success) {
-        Message.showSuccess(
-            context: context,
-            message: 'User was successfully logout!',
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-                (Route<dynamic> route) => false,
-              );
-            });
-      } else {
-        Message.showError(context: context, message: response.error!.message);
+      if (currentUser != null) {
+        var response = await currentUser!.logout();
+        if (response.success) {
+          Message.showSuccess(
+              context: context,
+              message: 'User was successfully logout!',
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              });
+        } else {
+          Message.showError(context: context, message: response.error!.message);
+        }
       }
     }
 
@@ -128,49 +132,46 @@ class DataTableColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 650, // Adjust this to fit your needs
+      height: 650,
       child: ListView.builder(
         itemCount: tableCount,
         itemBuilder: (context, tableIndex) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: FutureBuilder<List>(
-              future: fetchData(), // Call the fetchData method asynchronously
+            child: FutureBuilder<List<ParseObject>>(
+              future: fetchData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator(); // Show a loading indicator while waiting for the data
+                  return CircularProgressIndicator();
                 } else if (snapshot.hasError) {
-                  return Text(
-                      'Error: ${snapshot.error}'); // Show an error message if an error occurs
+                  return Text('Error: ${snapshot.error}');
                 } else {
-                  final dataList = snapshot.data;
+                  final List<ParseObject> dataList = snapshot.data!;
                   return DataTable(
                     columnSpacing: 80,
                     columns: const <DataColumn>[
                       DataColumn(
                         label: Text(
                           'Name',
-                          // style: TextStyle(fontStyle: FontStyle.italic),
                         ),
                       ),
                       DataColumn(
                         label: Text(
                           'Status',
-                          // style: TextStyle(fontStyle: FontStyle.italic),
                         ),
                       ),
                       DataColumn(
                         label: Text(
                           '',
-                          // style: TextStyle(fontStyle: FontStyle.italic),
                         ),
                       ),
                     ],
-                    rows: dataList!
+                    rows: dataList
                         .map(
                           (data) => DataRow(
                             cells: <DataCell>[
-                              DataCell(Text(data.get<String>('Name'))),
+                              DataCell(Text(
+                                  data.get<String>('Name') ?? 'Default Name')),
                               const DataCell(Text("Working")),
                               DataCell(
                                 ElevatedButton(
@@ -180,7 +181,14 @@ class DataTableColumn extends StatelessWidget {
                                     padding: const EdgeInsets.all(0.0),
                                     shape: const StadiumBorder(),
                                   ),
-                                  onPressed: () => const ProjectScreen2(),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ProjectScreen2()),
+                                    );
+                                  },
                                   child: const Text(
                                     'Edit',
                                     style: TextStyle(fontSize: 15),
@@ -206,10 +214,14 @@ class DataTableColumn extends StatelessWidget {
         QueryBuilder<ParseObject>(ParseObject('Projects'));
 
     final response = await query.query();
+    print(query.queries);
+    print(response.success);
+    print(response.results);
     if (response.success && response.results != null) {
       final resultList = response.results as List<ParseObject>;
       return resultList;
     } else {
+      print("Not Working");
       return []; // Ensure the error is non-null
     }
   }
