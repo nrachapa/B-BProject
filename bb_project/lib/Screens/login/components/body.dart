@@ -1,7 +1,6 @@
-import 'package:bb_project/Screens/admin/admin_screen.dart';
+import 'package:bb_project/Screens/admin_screen_1/admin_screen_1.dart';
 import 'package:bb_project/Screens/project_screen_1/project_screen_1.dart';
 import 'package:bb_project/Screens/login/components/background.dart';
-import 'package:bb_project/Screens/project_screen_2/project_screen_2.dart';
 import 'package:bb_project/Screens/signup/signup_screen.dart';
 import 'package:bb_project/components/forgot_password.dart';
 import 'package:bb_project/components/rounded_button.dart';

@@ -1,4 +1,4 @@
-import 'package:bb_project/Screens/admin/components/body.dart';
+import 'package:bb_project/Screens/admin_screen_1/components/body.dart';
 import 'package:flutter/material.dart';
 
 class AdminScreen extends StatelessWidget {
