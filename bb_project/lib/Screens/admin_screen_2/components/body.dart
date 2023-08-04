@@ -34,7 +34,11 @@ class Body extends StatelessWidget {
             title: const Text('Employees'),
             backgroundColor: const Color(0xffe56666),
             actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+              IconButton(
+                  onPressed: () {
+                    showSearch(context: context, delegate: EmployeeSearch());
+                  },
+                  icon: const Icon(Icons.search))
             ]),
         body: FutureBuilder<ParseUser?>(
             future: getUser(),
@@ -55,23 +59,7 @@ class Body extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Datatable call
                         const DataTableColumn(tableCount: 1, rowCount: 100),
-                        // ElevatedButton(
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: const Color(0xffe56666),
-                        //     foregroundColor: Colors.white,
-                        //     padding: const EdgeInsets.all(10.0),
-                        //     shape: const StadiumBorder(),
-                        //   ),
-                        //   onPressed: () {
-                        //     print('pressed and saved');
-                        //     showInfo(context);
-                        //   },
-                        //   child: const Text('Save',
-                        //       style: TextStyle(fontSize: 18)),
-                        // ),
-
                         Container(
                           padding: const EdgeInsets.all(10.0),
                           child: logoutButton(user, context),
@@ -82,7 +70,6 @@ class Body extends StatelessWidget {
               }
             }));
   }
-
 
   Widget logoutButton(User user, BuildContext context) {
     void doUserLogout() async {
@@ -107,8 +94,6 @@ class Body extends StatelessWidget {
   }
 }
 
-// DataTable call
-// DataTable call
 class DataTableColumn extends StatefulWidget {
   final int tableCount;
   final int rowCount;
@@ -122,7 +107,7 @@ class DataTableColumn extends StatefulWidget {
 }
 
 class _DataTableColumnState extends State<DataTableColumn> {
-  late List<bool> checked; // List to hold checkbox states
+  late List<bool> checked;
 
   @override
   void initState() {
@@ -140,45 +125,126 @@ class _DataTableColumnState extends State<DataTableColumn> {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              columnSpacing: 190,
+              columnSpacing: 300,
               columns: const <DataColumn>[
                 DataColumn(
                   label: Expanded(
                     child: Text('Employee Name'),
                   ),
                 ),
-                // DataColumn(
-                //   label: Expanded(
-                //     child: Text('Completed'),
-                //   ),
-                // ),
               ],
               rows: List<DataRow>.generate(
                 widget.rowCount,
                 (int rowIndex) => DataRow(
-                  
                   cells: <DataCell>[
-                    DataCell(SizedBox(
-                      width: 500,
-                      child: Text(
-                        'Employee ${(tableIndex * widget.rowCount) + rowIndex + 1}'),
-                    )),
-                        
-                    // DataCell(Checkbox(
-                    //   value: checked[(tableIndex * widget.rowCount) + rowIndex],
-                    //   onChanged: (bool? value) {
-                    //     setState(() {
-                    //       checked[(tableIndex * widget.rowCount) + rowIndex] =
-                    //           value!;
-                    //     });
-                    //   },
-                    // )),
+                    DataCell(
+                      GestureDetector(
+                        child: Text('Employee ${(tableIndex * widget.rowCount) + rowIndex + 1}'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EmployeeDetailScreen(
+                                employee: 'Employee ${(tableIndex * widget.rowCount) + rowIndex + 1}',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class EmployeeSearch extends SearchDelegate<String> {
+  final employees = List<String>.generate(100, (index) => 'Employee ${index + 1}');
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: Icon(Icons.clear),
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, '');
+      },
+      icon: Icon(Icons.arrow_back),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return ListTile(
+      title: Text(query),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EmployeeDetailScreen(employee: query),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = employees.where((employee) {
+      return employee.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(suggestions[index]),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EmployeeDetailScreen(
+                  employee: suggestions[index],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class EmployeeDetailScreen extends StatelessWidget {
+  final String employee;
+
+  const EmployeeDetailScreen({Key? key, required this.employee})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(employee),
+        backgroundColor: const Color(0xffe56666),
+      ),
+      body: Center(
+        child: Text('Details for $employee'),
       ),
     );
   }
