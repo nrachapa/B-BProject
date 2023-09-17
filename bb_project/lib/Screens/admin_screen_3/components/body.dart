@@ -98,8 +98,7 @@ class Body extends StatelessWidget {
 }
 
 class ProjectSearch extends SearchDelegate<String> {
-  final projects =
-      List<String>.generate(100, (index) => 'Project ${index + 1}');
+  final projects = List<String>.generate(100, (index) => 'Project ${index + 1}');
 
   @override
   List<Widget> buildActions(BuildContext context) {
