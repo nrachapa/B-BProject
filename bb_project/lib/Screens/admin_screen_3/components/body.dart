@@ -1,13 +1,11 @@
 import 'package:bb_project/Screens/admin_screen_4/admin_screen_4.dart';
 import 'package:bb_project/Screens/home/components/user.dart';
 import 'package:bb_project/Screens/login/login_screen.dart';
-import 'package:bb_project/Screens/project_screen_2/project_screen_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import '../../Message.dart';
 import '../../hours/components/user_preference.dart';
-import '../../hours/hours_screen.dart';
 import 'button_widget.dart';
 
 class Body extends StatelessWidget {
@@ -27,55 +25,55 @@ class Body extends StatelessWidget {
     ]);
 
     return Scaffold(
-        appBar: AppBar(
-            title: const Text('Ongoing Projects'),
-            backgroundColor: const Color(0xffe56666),
-            actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))]),
-        body: FutureBuilder<ParseUser?>(
-            future: getUser(),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                  return const Center(
-                    child: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: CircularProgressIndicator()),
-                  );
-                default:
-                  return Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Container(
-                        //     padding: const EdgeInsets.all(0),
-                        //     child: Row(
-                        //         mainAxisAlignment: MainAxisAlignment.center,
-                        //         children: [
-                        //           Text(
-                        //             'Hello, ${snapshot.data!.username}',
-                        //             style: const TextStyle(
-                        //               fontSize: 15,
-                        //             ),
-                        //           ),
-                        //         ])),
-                        // Datatable call
-                        const DataTableColumn(tableCount: 1, rowCount: 100),
-                        Container(
-                          padding: const EdgeInsets.all(10.0),
-                          child: logoutButton(user, context),
-                        ),
-                      ],
+      appBar: AppBar(
+        title: const Text('Ongoing Projects'),
+        backgroundColor: const Color(0xffe56666),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showSearch(context: context, delegate: ProjectSearch());
+            },
+            icon: const Icon(Icons.search),
+          ),
+        ],
+      ),
+      body: FutureBuilder<ParseUser?>(
+        future: getUser(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return const Center(
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            default:
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Your other UI elements
+                    const DataTableColumn(tableCount: 1, rowCount: 100),
+                    Container(
+                      padding: const EdgeInsets.all(10.0),
+                      child: logoutButton(user, context),
                     ),
-                  );
-              }
-            }));
+                  ],
+                ),
+              );
+          }
+        },
+      ),
+    );
   }
 
   Widget logoutButton(User user, BuildContext context) {
+    // Your logout function and button implementation
     void doUserLogout() async {
       var response = await currentUser!.logout();
       if (response.success) {
@@ -98,7 +96,71 @@ class Body extends StatelessWidget {
   }
 }
 
-// DataTable call
+class ProjectSearch extends SearchDelegate<String> {
+  final projects = List<String>.generate(100, (index) => 'Project ${index + 1}');
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: const Icon(Icons.clear),
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, '');
+      },
+      icon: const Icon(Icons.arrow_back),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return ListTile(
+      title: Text(query),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdminScreen4(),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = projects.where((project) {
+      return project.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(suggestions[index]),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AdminScreen4(),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
 class DataTableColumn extends StatelessWidget {
   final int tableCount;
   final int rowCount;

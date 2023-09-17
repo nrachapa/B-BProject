@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import '../../Message.dart';
 import '../../hours/components/user_preference.dart';
-import '../../hours/hours_screen.dart';
 import 'package:bb_project/Screens/project_screen_2/components/button_widget.dart';
+
 
 class Body extends StatelessWidget {
   ParseUser? currentUser;
@@ -34,7 +34,11 @@ class Body extends StatelessWidget {
             title: const Text('Tasks'),
             backgroundColor: const Color(0xffe56666),
             actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+              IconButton(
+                  onPressed: () {
+                    showSearch(context: context, delegate: TaskSearch());
+                  },
+                  icon: const Icon(Icons.search))
             ]),
         body: FutureBuilder<ParseUser?>(
             future: getUser(),
@@ -71,7 +75,6 @@ class Body extends StatelessWidget {
                           child: const Text('Save',
                               style: TextStyle(fontSize: 18)),
                         ),
-
                         Container(
                           padding: const EdgeInsets.all(10.0),
                           child: logoutButton(user, context),
@@ -81,21 +84,6 @@ class Body extends StatelessWidget {
                   );
               }
             }));
-  }
-
-  Widget projectButton(User user, BuildContext context) {
-    return ButtonWidget(
-        text: "Submit Hours",
-        onClicked: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return const SubmitHoursScreen();
-              },
-            ),
-          );
-        });
   }
 
   Widget logoutButton(User user, BuildContext context) {
@@ -121,8 +109,61 @@ class Body extends StatelessWidget {
   }
 }
 
-// DataTable call
-// DataTable call
+class TaskSearch extends SearchDelegate<String> {
+  final tasks = List<String>.generate(100, (index) => 'Task ${index + 1}');
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: const Icon(Icons.clear),
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, '');
+      },
+      icon: const Icon(Icons.arrow_back),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return ListTile(
+      title: Text(query),
+      onTap: () {
+        // Define the functionality when a result is clicked.
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = tasks.where((task) {
+      return task.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(suggestions[index]),
+          onTap: () {
+            // Define the functionality when a suggestion is clicked.
+          },
+        );
+      },
+    );
+  }
+}
+
 class DataTableColumn extends StatefulWidget {
   final int tableCount;
   final int rowCount;

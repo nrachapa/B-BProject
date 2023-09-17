@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import '../../Message.dart';
 import '../../hours/components/user_preference.dart';
-import '../../hours/hours_screen.dart';
 import 'package:bb_project/Screens/project_screen_2/components/button_widget.dart';
 
 class Body extends StatelessWidget {
@@ -173,7 +172,7 @@ class EmployeeSearch extends SearchDelegate<String> {
         onPressed: () {
           query = '';
         },
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
       ),
     ];
   }
@@ -184,7 +183,7 @@ class EmployeeSearch extends SearchDelegate<String> {
       onPressed: () {
         close(context, '');
       },
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
     );
   }
 
