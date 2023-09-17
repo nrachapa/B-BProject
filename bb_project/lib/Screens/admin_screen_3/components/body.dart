@@ -1,3 +1,4 @@
+// Project
 import 'package:bb_project/Screens/admin_screen_4/admin_screen_4.dart';
 import 'package:bb_project/Screens/home/components/user.dart';
 import 'package:bb_project/Screens/login/login_screen.dart';
@@ -97,7 +98,8 @@ class Body extends StatelessWidget {
 }
 
 class ProjectSearch extends SearchDelegate<String> {
-  final projects = List<String>.generate(100, (index) => 'Project ${index + 1}');
+  final projects =
+      List<String>.generate(100, (index) => 'Project ${index + 1}');
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -178,70 +180,93 @@ class DataTableColumn extends StatelessWidget {
         itemBuilder: (context, tableIndex) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columnSpacing: 80,
-              columns: const <DataColumn>[
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      'Project Name',
-                      // style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-                // DataColumn(
-                //   label: Expanded(
-                //     child: Text(
-                //       'Status',
-                //       // style: TextStyle(fontStyle: FontStyle.italic),
-                //     ),
-                //   ),
-                // ),
-                DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      '',
-                      // style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ),
-              ],
-              rows: List<DataRow>.generate(
-                rowCount,
-                (int rowIndex) => DataRow(
-                  cells: <DataCell>[
-                    DataCell(SizedBox(
-                      width: 200,
-                      child: Text(
-                        'Project ${(tableIndex * rowCount) + rowIndex + 1}'),
-                    )),
-                    // const DataCell(Text("Working")),
-                    DataCell(ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xffe56666), // background (button) color
-                            foregroundColor:
-                                Colors.white, // foreground (text) color
-                            padding: const EdgeInsets.all(0.0),
-                            shape: const StadiumBorder(),
+            child: FutureBuilder<List<ParseObject>>(
+              future: fetchData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final List<ParseObject> dataList = snapshot.data!;
+                  return DataTable(
+                    columnSpacing: 80,
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Expanded(
+                          child: Text(
+                            'Project Name',
+                            // style: TextStyle(fontStyle: FontStyle.italic),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AdminScreen4(),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Expanded(
+                          child: Text(
+                            'Status',
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Expanded(
+                          child: Text(
+                            '',
+                          ),
+                        ),
+                      ),
+                    ],
+                    rows: dataList
+                        .map(
+                          (data) => DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text(
+                                  data.get<String>('Name') ?? 'Default Name')),
+                              const DataCell(Text("Working")),
+                              DataCell(
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xffe56666),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(0.0),
+                                    shape: const StadiumBorder(),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => AdminScreen4()),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'View',
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
                               ),
-                            );
-                          },
-                          child: const Text('View', style: TextStyle(fontSize: 15),),
-                        ),),
-                  ],
-                ),
-              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  );
+                }
+              },
             ),
           );
         },
       ),
     );
+  }
+}
+
+Future<List<ParseObject>> fetchData() async {
+  final QueryBuilder<ParseObject> query =
+      QueryBuilder<ParseObject>(ParseObject('Projects'));
+
+  final response = await query.query();
+  if (response.success && response.results != null) {
+    final resultList = response.results as List<ParseObject>;
+    return resultList;
+  } else {
+    return []; // Ensure the error is non-null
   }
 }
